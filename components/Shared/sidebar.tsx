@@ -2,12 +2,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import React from "react";
-import { SignedIn } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { navLinks } from "@/app/(root)/constants";
 import { usePathname } from "next/navigation";
+import { Button } from "../ui/button";
 
 const Sidebar = () => {
-    const pathname = usePathname();
+  const pathname = usePathname();
   return (
     <aside className="sidebar">
       <div className=" flex size-full flex-col gap-4">
@@ -21,34 +22,73 @@ const Sidebar = () => {
         </Link>
 
         <nav className="sidebar-nav">
-            <SignedIn>
-                <ul className="sidebar-nav_elements">
+          <SignedIn>
+            <ul className="sidebar-nav_elements">
+              {navLinks.slice(0, 6).map((link) => {
+                const isActive = link.route === pathname;
 
-                    {navLinks.map((link) => {
-                        const isActive = link.route === pathname
+                return (
+                  <li
+                    key={link.route}
+                    className={`sidebar-nav_element group ${
+                      isActive
+                        ? "bg-purple-gradient text-white"
+                        : "text-gray-700"
+                    }`}
+                  >
+                    <Link className="sidebar-link" href={link.route}>
+                      <Image
+                        src={link.icon}
+                        alt="logo"
+                        width={24}
+                        height={24}
+                        className={`${isActive && "brightness-200"}`}
+                      />
+                      {link.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
 
-                        return (
-                            <li key={link.route} className = {`sidebar-nav_element group ${
-                                isActive ? 'bg-purple-gradient text-white' : 'text-gray-700'}`}>
+            <ul className="sidebar-nav_elements">
+              {navLinks.slice(6).map((link) => {
+                const isActive = link.route === pathname;
 
-                                    <Link className="sidebar-link" href={link.route}>
+                return (
+                  <li
+                    key={link.route}
+                    className={`sidebar-nav_element group ${
+                      isActive
+                        ? "bg-purple-gradient text-white"
+                        : "text-gray-700"
+                    }`}
+                  >
+                    <Link className="sidebar-link" href={link.route}>
+                      <Image
+                        src={link.icon}
+                        alt="logo"
+                        width={24}
+                        height={24}
+                        className={`${isActive && "brightness-200"}`}
+                      />
+                      {link.label}
+                    </Link>
+                  </li>
+                );
+              })}
 
-                                        <Image src={link.icon}
-                                        alt = "logo"
-                                        width={24}
-                                        height={24}
-                                        className={`${isActive && 'brightness-200'}`}
-                                    
-                                    />
-                                    {link.label}
-                                    </Link>
+              <li className="flex-center cursor-pointer gap-2 p-4">
+                <UserButton afterSignOutUrl="/" showName />
+              </li>
+            </ul>
+          </SignedIn>
 
-                                    </li>
-                        )
-                    })}
-
-                </ul>
-            </SignedIn>
+          <SignedOut>
+            <Button className="button bg-purple-gradient bg-cover">
+              <Link href="/sign-in">login</Link>
+            </Button>
+          </SignedOut>
         </nav>
       </div>
     </aside>
